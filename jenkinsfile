@@ -1,0 +1,16 @@
+pipeline {
+    agent any
+    stages {
+        stage('Copy Files') {
+            steps {
+                sh '''
+                  #!/bin/bash
+                  #Copying file from workspace to /var/www/html
+                  cp ${WORKSPACE}/index.html /var/www/html/
+                  # Verify the copy
+                  ls -l /var/www/html/index.html
+                '''
+            }
+        }
+    }
+}
