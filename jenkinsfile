@@ -6,7 +6,7 @@ pipeline {
                 sh '''
                   #!/bin/bash
                   #Copying file from workspace to /var/www/html
-                  cp ${WORKSPACE}/index.html /var/www/html/
+                  scp * admin@172.31.5.238:/var/www/html/
                   # Verify the copy
                   ls -l /var/www/html/index.html
                 '''
