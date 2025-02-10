@@ -8,7 +8,7 @@ pipeline {
                   #Copying file from workspace to /var/www/html
                   scp * admin@172.31.5.238:/var/www/html/
                   # Verify the copy
-                  ls -l /var/www/html/index.html
+                  #ls -l /var/www/html/index.html
                 '''
             }
         }
