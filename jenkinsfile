@@ -13,7 +13,7 @@ pipeline {
         }
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv(credentialsId: '$SONAR_CREDENTIAL_ID', sonarQubeInstallationName: 'SonarQube Server') {  // Set SonarQube environment
+               	  withSonarQubeEnv('sonarqube') {  // Set SonarQube environment
                     sh '''$SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=hashify \
                     -Dsonar.java.binaries=. \
                     -Dsonar.projectKey=hashify'''
