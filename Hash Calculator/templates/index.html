@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+ <title>Modern Hash Calculator</title>
+ <!-- Google Fonts -->
+ <link rel="preconnect" href="https://fonts.googleapis.com" />
+ <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+ <link
+ href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap"
+ rel="stylesheet"
+ />
+ <!-- Bootstrap CSS -->
+ <link
+ href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+ rel="stylesheet"
+ />
+ <style>
+ :root {
+ --primary-color: #007bff;
+ --accent-color: #ff007b;
+ }
+
+ /* Background Slider Container */
+ #background-slider {
+ position: fixed;
+ top: 0;
+ left: 0;
+ width: 100%;
+ height: 100%;
+ z-index: -2;
+ overflow: hidden;
+ }
+ 
+ /* Each slide */
+ #background-slider .slide {
+ position: absolute;
+ width: 100%;
+ height: 100%;
+ background-size: cover;
+ background-position: center;
+ opacity: 0;
+ animation: fade 15s infinite;
+ }
+ 
+ /* Stagger animation delays for each slide */
+ #background-slider .slide:nth-child(1) {
+ background-image: url('https://source.unsplash.com/1600x900/?technology');
+ animation-delay: 0s;
+ }
+ #background-slider .slide:nth-child(2) {
+ background-image: url('https://source.unsplash.com/1600x900/?nature');
+ animation-delay: 5s;
+ }
+ #background-slider .slide:nth-child(3) {
+ background-image: url('https://source.unsplash.com/1600x900/?city');
+ animation-delay: 10s;
+ }
+ 
+ @keyframes fade {
+ 0% { opacity: 0; }
+ 10% { opacity: 1; }
+ 30% { opacity: 1; }
+ 40% { opacity: 0; }
+ 100% { opacity: 0; }
+ }
+
+ /* Overlay to improve content readability */
+ #overlay {
+ position: fixed;
+ top: 0;
+ left: 0;
+ width: 100%;
+ height: 100%;
+ background: rgba(255, 255, 255, 0.9);
+ z-index: -1;
+ }
+
+ /* Global Styles */
+ body {
+ font-family: 'Poppins', sans-serif;
+ margin: 0;
+ padding: 0;
+ color: #343a40;
+ overflow-x: hidden;
+ /* Content will appear on top of slider & overlay */
+ }
+ 
+ /* Fade-in animation for elements */
+ @keyframes fadeIn {
+ from { opacity: 0; transform: translateY(20px); }
+ to { opacity: 1; transform: translateY(0); }
+ }
+ 
+ header {
+ background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+ color: #fff;
+ padding: 60px 20px;
+ text-align: center;
+ box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+ position: relative;
+ z-index: 1;
+ }
+ 
+ header h1 {
+ font-size: 3rem;
+ font-weight: 700;
+ margin-bottom: 10px;
+ }
+ 
+ header p {
+ font-size: 1.2rem;
+ margin: 0;
+ }
+ 
+ /* Nav Tabs */
+ .nav-tabs {
+ border: none;
+ margin-top: 30px;
+ justify-content: center;
+ position: relative;
+ z-index: 1;
+ }
+ 
+ .nav-tabs .nav-link {
+ border: none;
+ border-radius: 50px;
+ margin: 0 8px;
+ padding: 10px 20px;
+ background: #fff;
+ color: #6c757d;
+ font-weight: 600;
+ transition: transform 0.3s ease, box-shadow 0.3s ease;
+ box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+ }
+ 
+ .nav-tabs .nav-link.active {
+ background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+ color: #fff;
+ box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+ }
+ 
+ .nav-tabs .nav-link:hover {
+ transform: translateY(-3px);
+ box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+ }
+ 
+ /* Cards */
+ .card {
+ border: none;
+ border-radius: 20px;
+ padding: 30px;
+ box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+ background: #fff;
+ transition: transform 0.3s ease, box-shadow 0.3s ease;
+ animation: fadeIn 0.8s ease forwards;
+ margin-bottom: 30px;
+ }
+ 
+ .card:hover {
+ transform: translateY(-5px);
+ box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+ }
+ 
+ .card h2 {
+ font-size: 1.8rem;
+ margin-bottom: 20px;
+ font-weight: 600;
+ }
+ 
+ /* Form Elements */
+ .form-control {
+ border-radius: 30px;
+ padding: 12px 20px;
+ border: 1px solid #ced4da;
+ transition: border-color 0.3s ease, box-shadow 0.3s ease;
+ }
+ 
+ .form-control:focus {
+ border-color: var(--primary-color);
+ box-shadow: 0 0 10px rgba(0, 123, 255, 0.3);
+ }
+ 
+ textarea {
+ resize: none;
+ border-radius: 15px;
+ }
+ 
+ .form-check {
+ margin-bottom: 10px;
+ }
+ 
+ /* Buttons */
+ .btn {
+ border-radius: 30px;
+ font-weight: 600;
+ transition: transform 0.3s ease, box-shadow 0.3s ease;
+ }
+ 
+ .btn:hover {
+ transform: scale(1.05);
+ box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+ }
+ 
+ /* Hash Results */
+ .hash-results {
+ background: #f1f3f5;
+ padding: 20px;
+ border-radius: 12px;
+ font-family: monospace;
+ white-space: pre-wrap;
+ margin-top: 20px;
+ box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.05);
+ animation: fadeIn 0.6s ease forwards;
+ }
+ </style>
+</head>
+<body>
+ <!-- Background Image Slider -->
+ <div id="background-slider">
+ <div class="slide"></div>
+ <div class="slide"></div>
+ <div class="slide"></div>
+ </div>
+ <!-- Semi-transparent overlay -->
+ <div id="overlay"></div>
+
+ <header>
+ <h1>🔐 Hashify</h1>
+ <p>Calculate and compare hashes with a modern UI</p>
+ </header>
+
+ <div class="container my-5" style="position: relative; z-index: 1;">
+ <!-- Navigation Tabs -->
+ <ul class="nav nav-tabs" id="myTab" role="tablist">
+ <li class="nav-item" role="presentation">
+ <button class="nav-link active" id="file-hash-tab" data-bs-toggle="tab" data-bs-target="#file-hash" type="button" role="tab" aria-controls="file-hash" aria-selected="true">
+ 📄 Document Hash
+ </button>
+ </li>
+ <li class="nav-item" role="presentation">
+ <button class="nav-link" id="text-hash-tab" data-bs-toggle="tab" data-bs-target="#text-hash" type="button" role="tab" aria-controls="text-hash" aria-selected="false">
+ ✍️ Text Hash
+ </button>
+ </li>
+ <li class="nav-item" role="presentation">
+ <button class="nav-link" id="compare-hash-tab" data-bs-toggle="tab" data-bs-target="#compare-hash" type="button" role="tab" aria-controls="compare-hash" aria-selected="false">
+ 🔍 Compare Hashes
+ </button>
+ </li>
+ </ul>
+
+ <div class="tab-content mt-4" id="myTabContent">
+ <!-- File Hash Calculation Tab -->
+ <div class="tab-pane fade show active" id="file-hash" role="tabpanel" aria-labelledby="file-hash-tab">
+ <div class="card">
+ <h2>Calculate Hash from Document</h2>
+ <div class="mb-3">
+ <input type="file" class="form-control" id="file-input" accept=".pdf,.doc,.txt,.png,.jpg,.jpeg">
+ </div>
+ <!-- Checkboxes for multiple algorithms -->
+ <div class="mb-3">
+ <label class="form-label">Select Hash Algorithm(s)</label>
+ <div class="form-check">
+ <input class="form-check-input" type="checkbox" value="md5" id="file-md5" name="algorithms">
+ <label class="form-check-label" for="file-md5">MD5</label>
+ </div>
+ <div class="form-check">
+ <input class="form-check-input" type="checkbox" value="sha1" id="file-sha1" name="algorithms">
+ <label class="form-check-label" for="file-sha1">SHA1</label>
+ </div>
+ <div class="form-check">
+ <input class="form-check-input" type="checkbox" value="sha256" id="file-sha256" name="algorithms">
+ <label class="form-check-label" for="file-sha256">SHA256</label>
+ </div>
+ <div class="form-check">
+ <input class="form-check-input" type="checkbox" value="sha512" id="file-sha512" name="algorithms">
+ <label class="form-check-label" for="file-sha512">SHA512</label>
+ </div>
+ </div>
+ <div class="d-flex gap-2">
+ <button class="btn btn-primary" id="calculate-file-hash">Calculate Hash</button>
+ <button class="btn btn-secondary" id="clear-file-hash">Clear</button>
+ </div>
+ <div class="hash-results mt-3" id="file-hash-result"></div>
+ </div>
+ </div>
+
+ <!-- Text Hash Calculation Tab -->
+ <div class="tab-pane fade" id="text-hash" role="tabpanel" aria-labelledby="text-hash-tab">
+ <div class="card">
+ <h2>Calculate Hash from Text</h2>
+ <div class="mb-3">
+ <textarea class="form-control" id="text-input" placeholder="Enter text here..." rows="5"></textarea>
+ </div>
+ <!-- Checkboxes for multiple algorithms -->
+ <div class="mb-3">
+ <label class="form-label">Select Hash Algorithm(s)</label>
+ <div class="form-check">
+ <input class="form-check-input" type="checkbox" value="md5" id="text-md5" name="algorithms">
+ <label class="form-check-label" for="text-md5">MD5</label>
+ </div>
+ <div class="form-check">
+ <input class="form-check-input" type="checkbox" value="sha1" id="text-sha1" name="algorithms">
+ <label class="form-check-label" for="text-sha1">SHA1</label>
+ </div>
+ <div class="form-check">
+ <input class="form-check-input" type="checkbox" value="sha256" id="text-sha256" name="algorithms">
+ <label class="form-check-label" for="text-sha256">SHA256</label>
+ </div>
+ <div class="form-check">
+ <input class="form-check-input" type="checkbox" value="sha512" id="text-sha512" name="algorithms">
+ <label class="form-check-label" for="text-sha512">SHA512</label>
+ </div>
+ </div>
+ <div class="d-flex gap-2">
+ <button class="btn btn-primary" id="calculate-text-hash">Calculate Hash</button>
+ <button class="btn btn-secondary" id="clear-text-hash">Clear</button>
+ </div>
+ <div class="hash-results mt-3" id="text-hash-result"></div>
+ </div>
+ </div>
+
+ <!-- Hash Comparison Tab -->
+ <div class="tab-pane fade" id="compare-hash" role="tabpanel" aria-labelledby="compare-hash-tab">
+ <div class="card">
+ <h2>Compare Hashes</h2>
+ <div class="mb-3">
+ <input type="text" class="form-control" id="hash1" placeholder="Enter first hash...">
+ </div>
+ <div class="mb-3">
+ <input type="text" class="form-control" id="hash2" placeholder="Enter second hash...">
+ </div>
+ <div class="d-flex gap-2">
+ <button class="btn btn-primary" id="compare-hash">Compare</button>
+ <button class="btn btn-secondary" id="clear-compare-hash">Clear</button>
+ </div>
+ <div class="hash-results mt-3" id="compare-result"></div>
+ </div>
+ </div>
+ </div>
+ </div>
+
+ <!-- Bootstrap JS and dependencies -->
+ <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+ <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+ <script>
+ document.addEventListener("DOMContentLoaded", () => {
+ // Calculation event listeners
+ document.getElementById("calculate-file-hash").addEventListener("click", calculateFileHash);
+ document.getElementById("calculate-text-hash").addEventListener("click", calculateTextHash);
+ document.getElementById("compare-hash").addEventListener("click", compareHashes);
+
+ // Clear event listeners
+ document.getElementById("clear-file-hash").addEventListener("click", clearFileHash);
+ document.getElementById("clear-text-hash").addEventListener("click", clearTextHash);
+ document.getElementById("clear-compare-hash").addEventListener("click", clearCompareHash);
+ });
+ 
+ async function calculateFileHash() {
+ const fileInput = document.getElementById("file-input");
+ const resultDiv = document.getElementById("file-hash-result");
+ 
+ if (fileInput.files.length === 0) {
+ resultDiv.textContent = "Please select a file.";
+ return;
+ }
+ 
+ // Get selected checkboxes for file algorithms
+ const checkboxes = document.querySelectorAll("#file-hash input[name='algorithms']:checked");
+ const algorithms = Array.from(checkboxes).map(cb => cb.value);
+ 
+ if (algorithms.length === 0) {
+ resultDiv.textContent = "Please select at least one algorithm.";
+ return;
+ }
+ 
+ const file = fileInput.files[0];
+ const formData = new FormData();
+ formData.append("file", file);
+ algorithms.forEach(algo => formData.append("algorithms", algo));
+ 
+ try {
+ const response = await fetch("/calculate_file_hash", {
+ method: "POST",
+ body: formData,
+ });
+ const result = await response.json();
+ if (result.error) {
+ resultDiv.textContent = "Error: " + result.error;
+ } else {
+ let output = "";
+ for (const [algo, hash] of Object.entries(result.hashes)) {
+ output += `${algo}: ${hash}\n`;
+ }
+ resultDiv.textContent = output;
+ }
+ } catch (error) {
+ resultDiv.textContent = "Error calculating hash.";
+ }
+ }
+ 
+ async function calculateTextHash() {
+ const textInput = document.getElementById("text-input").value;
+ const resultDiv = document.getElementById("text-hash-result");
+ 
+ if (!textInput) {
+ resultDiv.textContent = "Please enter some text.";
+ return;
+ }
+ 
+ // Get selected checkboxes for text algorithms
+ const checkboxes = document.querySelectorAll("#text-hash input[name='algorithms']:checked");
+ const algorithms = Array.from(checkboxes).map(cb => cb.value);
+ 
+ if (algorithms.length === 0) {
+ resultDiv.textContent = "Please select at least one algorithm.";
+ return;
+ }
+ 
+ try {
+ const response = await fetch("/calculate_text_hash", {
+ method: "POST",
+ headers: {
+ "Content-Type": "application/json",
+ },
+ body: JSON.stringify({ text: textInput, algorithms: algorithms }),
+ });
+ const result = await response.json();
+ if (result.error) {
+ resultDiv.textContent = "Error: " + result.error;
+ } else {
+ let output = "";
+ for (const [algo, hash] of Object.entries(result.hashes)) {
+ output += `${algo}: ${hash}\n`;
+ }
+ resultDiv.textContent = output;
+ }
+ } catch (error) {
+ resultDiv.textContent = "Error calculating hash.";
+ }
+ }
+ 
+ function compareHashes() {
+ const hash1 = document.getElementById("hash1").value;
+ const hash2 = document.getElementById("hash2").value;
+ const resultDiv = document.getElementById("compare-result");
+ 
+ if (!hash1 || !hash2) {
+ resultDiv.textContent = "Please enter both hash values.";
+ return;
+ }
+ 
+ if (hash1.trim().toLowerCase() === hash2.trim().toLowerCase()) {
+ resultDiv.textContent = "The hash values match.";
+ } else {
+ resultDiv.textContent = "The hash values do not match.";
+ }
+ }
+ 
+ // Clear Functions for each tab
+ function clearFileHash() {
+ document.getElementById("file-input").value = "";
+ document.querySelectorAll("#file-hash input[name='algorithms']").forEach(cb => cb.checked = false);
+ document.getElementById("file-hash-result").textContent = "";
+ }
+ 
+ function clearTextHash() {
+ document.getElementById("text-input").value = "";
+ document.querySelectorAll("#text-hash input[name='algorithms']").forEach(cb => cb.checked = false);
+ document.getElementById("text-hash-result").textContent = "";
+ }
+ 
+ function clearCompareHash() {
+ document.getElementById("hash1").value = "";
+ document.getElementById("hash2").value = "";
+ document.getElementById("compare-result").textContent = "";
+ }
+ </script>
+</body>
+</html>
