@@ -2,18 +2,18 @@ pipeline {
     agent any
     environment {
         SONAR_URL = "http://13.201.43.136:9000" // Replace with your SonarQube URL
-        SONAR_TOKEN = credentials('squ_48b642de47c69f6f39dcaeea5b1a491015c04047') // Use Jenkins credentials for SonarQube token
+        SONAR_CREDENTIAL_ID = 'squ_48b642de47c69f6f39dcaeea5b1a491015c04047'  // Use Jenkins credentials for SonarQube token
         DOCKER_IMAGE = "python-flask-app"
     }
     stages {
         stage('Checkout') {
             steps {
-                git url: 'https://github.com/cybersquad519/DITISS_Project.git', branch: 'master' // Replace with your Git repo URL and branch
+                git url: 'https://github.com/cybersquad519/DITISS_Project.git', branch: 'master' // Replace with your Git repo URL
             }
         }
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('sonarqube') {  // Set SonarQube environment
+                withSonarQubeEnv(credentialsId: '$SONAR_CREDENTIAL_ID', sonarQubeInstallationName: 'SonarQube Server') {  // Set SonarQube environment
                     sh '''$SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=hashify \
                     -Dsonar.java.binaries=. \
                     -Dsonar.projectKey=hashify'''
@@ -30,7 +30,7 @@ pipeline {
                 // Add steps to push the Docker image to a registry like Docker Hub or AWS ECR
                 // Example for Docker Hub:
                  sh "docker login -u cybersquad519 -p DockerHub@1123"
-                 sh "docker tag ${DOCKER_IMAGE} your-dockerhub-username/${DOCKER_IMAGE}"
+                 sh "docker tag ${DOCKER_IMAGE} cybersquad519/${DOCKER_IMAGE}"
                  sh "docker push cybersquad519/${DOCKER_IMAGE}"
             }
         }
@@ -39,12 +39,11 @@ pipeline {
                 sshagent (credentials: ['your-ssh-credentials']) { // Use Jenkins credentials for SSH access
                     sh """
                     docker stop Flask-app || true
-                    docker pull your-dockerhub-username/${DOCKER_IMAGE}
-                    docker run -d --name Flask-app -p 80:5000 your-dockerhub-username/${DOCKER_IMAGE}
+                    docker pull cybersquad519/${DOCKER_IMAGE}
+                    docker run -d --name Flask-app -p 80:5000 cybersquad519/${DOCKER_IMAGE}
                     """
                 }
             }
         }
     }
 }
-
