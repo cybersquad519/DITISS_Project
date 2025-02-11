@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
         SONAR_URL = "http://13.201.43.136:9000" // Replace with your SonarQube URL
-        SONAR_TOKEN = credentials('jenkins_cicd') // Use Jenkins credentials for SonarQube token
+        SONAR_TOKEN = credentials('squ_48b642de47c69f6f39dcaeea5b1a491015c04047') // Use Jenkins credentials for SonarQube token
         DOCKER_IMAGE = "python-flask-app"
     }
     stages {
