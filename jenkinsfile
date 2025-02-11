@@ -29,9 +29,9 @@ pipeline {
             steps {
                 // Add steps to push the Docker image to a registry like Docker Hub or AWS ECR
                 // Example for Docker Hub:
-                // sh "docker login -u your-dockerhub-username -p your-dockerhub-password"
-                // sh "docker tag ${DOCKER_IMAGE} your-dockerhub-username/${DOCKER_IMAGE}"
-                // sh "docker push your-dockerhub-username/${DOCKER_IMAGE}"
+                 sh "docker login -u cybersquad519 -p DockerHub@1123"
+                 sh "docker tag ${DOCKER_IMAGE} your-dockerhub-username/${DOCKER_IMAGE}"
+                 sh "docker push cybersquad519/${DOCKER_IMAGE}"
             }
         }
         stage('Deploy to Web Server') {
