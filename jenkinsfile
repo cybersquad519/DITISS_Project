@@ -1,16 +1,54 @@
 pipeline {
     agent any
+    environment {
+        SONAR_URL = "http://13.201.43.136:9000" // Replace with your SonarQube URL
+        SONAR_TOKEN = credentials('jenkins_cicd') // Use Jenkins credentials for SonarQube token
+        DOCKER_IMAGE = "python-flask-app"
+    }
     stages {
-        stage('Copy Files') {
+        stage('Checkout') {
             steps {
-                sh '''
-                  #!/bin/bash
-                  #Copying file from workspace to /var/www/html
-                  scp * admin@172.31.5.238:/var/www/html/
-                  # Verify the copy
-                  #ls -l /var/www/html/index.html
-                '''
+                git url: 'https://github.com/cybersquad519/DITISS_Project.git', branch: 'master' // Replace with your Git repo URL and branch
+            }
+        }
+        stage('SonarQube Analysis') {
+            steps {
+                withSonarQubeEnv(credentialsId: 'sonarqube-token') { // Use Jenkins credentials for SonarQube
+                    sh """
+                    sonar-scanner \
+                      -Dsonar.projectKey=your-project-key \  // Replace with your SonarQube project key
+                      -Dsonar.sources=. \
+                      -Dsonar.host.url=$SONAR_URL \
+                      -Dsonar.login=$SONAR_TOKEN
+                    """
+                }
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                sh "docker build -t ${DOCKER_IMAGE} ."
+            }
+        }
+        stage('Push Docker Image') {
+            steps {
+                // Add steps to push the Docker image to a registry like Docker Hub or AWS ECR
+                // Example for Docker Hub:
+                // sh "docker login -u your-dockerhub-username -p your-dockerhub-password"
+                // sh "docker tag ${DOCKER_IMAGE} your-dockerhub-username/${DOCKER_IMAGE}"
+                // sh "docker push your-dockerhub-username/${DOCKER_IMAGE}"
+            }
+        }
+        stage('Deploy to Web Server') {
+            steps {
+                sshagent (credentials: ['your-ssh-credentials']) { // Use Jenkins credentials for SSH access
+                    sh """
+                    docker stop Flask-app || true
+                    docker pull your-dockerhub-username/${DOCKER_IMAGE}
+                    docker run -d --name Flask-app -p 80:5000 your-dockerhub-username/${DOCKER_IMAGE}
+                    """
+                }
             }
         }
     }
 }
+
