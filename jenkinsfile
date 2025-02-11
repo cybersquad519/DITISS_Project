@@ -11,11 +11,11 @@ pipeline {
                 git url: 'https://github.com/cybersquad519/DITISS_Project.git', branch: 'master' // Replace with your Git repo URL
             }
         }
-        stage('SonarQube Analysis') {
-            def scannerHome = tool 'SonarScanner';
-    		withSonarQubeEnv() {
-      		sh "${scannerHome}/bin/sonar-scanner"
-   		 }
+//        stage('SonarQube Analysis') {
+//            def scannerHome = tool 'SonarScanner';
+//    		withSonarQubeEnv() {
+//      		sh "${scannerHome}/bin/sonar-scanner"
+//   		 }
   
         }
         stage('Build Docker Image') {
