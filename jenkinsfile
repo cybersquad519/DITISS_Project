@@ -27,13 +27,12 @@ pipeline {
         }
         stage('Deploy to Web Server') {
             steps {
-                sshagent (credentials: ['jenkins_cicd']) { // Use Jenkins credentials for SSH access
+             
                     sh """
                     docker stop Flask-app || true
                     docker pull cybersquad519/${DOCKER_IMAGE}
                     docker run -d --name Flask-app -p 80:5000 cybersquad519/${DOCKER_IMAGE}
-                    """
-                }
+                    """   
             }
         }
     }
