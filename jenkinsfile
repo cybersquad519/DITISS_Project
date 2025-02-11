@@ -13,14 +13,10 @@ pipeline {
         }
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv(credentialsId: 'squ_48b642de47c69f6f39dcaeea5b1a491015c04047') { // Use Jenkins credentials for SonarQube
-                    sh """
-                    sonar-scanner \
-                      -Dsonar.projectKey=sonarqube \  // Replace with your SonarQube project key
-                      -Dsonar.sources=. \
-                      -Dsonar.host.url=$SONAR_URL \
-                      -Dsonar.login=$SONAR_TOKEN
-                    """
+                withSonarQubeEnv('sonarqube') {  // Set SonarQube environment
+                    sh '''$SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=hashify \
+                    -Dsonar.java.binaries=. \
+                    -Dsonar.projectKey=hashify'''
                 }
             }
         }
